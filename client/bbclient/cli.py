@@ -30,7 +30,7 @@ async def main_async():
     parser.add_argument(
         "--output-dir",
         default=None,
-        help="保存浏览器环境的目录 (默认: 临时目录)"
+        help="保存浏览器环境的目录 (默认: 当前目录下的 bb_env)"
     )
     parser.add_argument(
         "--server-url",
@@ -56,20 +56,26 @@ async def main_async():
         
         # 等待用户与浏览器交互
         logger.info("Browser is open. Perform your actions now.")
-        logger.info("Close the browser window when finished to save the environment.")
+        logger.info("Close ALL browser windows/tabs when finished to save the environment.")
         
-        # 等待浏览器关闭
-        # 在实际实现中，您可能需要更好的方式来检测这一点
-        while len(context.pages) > 0:
-            await asyncio.sleep(1)
+        # 更可靠地等待浏览器关闭
+        # 循环检查是否有页面存在，如果没有页面则认为浏览器已关闭
+        try:
+            while len(context.pages) > 0:
+                await asyncio.sleep(1)
+        except Exception:
+            # 如果访问 pages 出错，说明上下文已关闭
+            pass
             
+        logger.info("Browser has been closed. Saving environment...")
+        
         # 保存环境
-        save_path = args.output_dir or os.path.join(tempfile.gettempdir(), "bb_env")
+        save_path = args.output_dir or os.path.join(os.getcwd(), "bb_env")
         metadata_path = await builder.save_environment(save_path)
         logger.info(f"Environment saved to {save_path}")
         
         # 打包环境
-        archive_path = os.path.join(tempfile.gettempdir(), "bb_env.tar.gz")
+        archive_path = os.path.join(os.getcwd(), "bb_env.tar.gz")
         Packer.pack_environment(save_path, archive_path)
         logger.info(f"Environment packed to {archive_path}")
         
