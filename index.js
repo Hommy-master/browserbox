@@ -331,7 +331,7 @@ async function extractFingerprintFromPage(page, baseFingerprint) {
  * 启动手动模式
  */
 async function startManualMode() {
-  console.log('启动手动模式...');
+  console.log('Starting manual mode...');
   
   // 确保配置目录存在
   await ensureConfigDir();
@@ -341,11 +341,11 @@ async function startManualMode() {
   
   // 如果没有指纹信息，则生成随机指纹
   if (!fingerprint) {
-    console.log('未找到现有指纹信息，生成随机指纹...');
+    console.log('No existing fingerprint found, generating random fingerprint...');
     fingerprint = generateRandomFingerprint();
     await saveFingerprint(fingerprint);
   } else {
-    console.log('使用现有指纹信息...');
+    console.log('Using existing fingerprint...');
   }
   
   // 启动浏览器
@@ -371,7 +371,7 @@ async function startManualMode() {
     });
   });
   
-  console.log('浏览器已启动，请开始操作...');
+  console.log('Browser started, please begin operation...');
   console.log(`User Agent: ${fingerprint.userAgent}`);
   console.log(`Viewport: ${fingerprint.viewport.width}x${fingerprint.viewport.height}`);
   
@@ -380,7 +380,7 @@ async function startManualMode() {
   
   // 监听浏览器关闭事件
   browser.on('disconnected', async () => {
-    console.log('浏览器已关闭，正在保存数据...');
+    console.log('Browser closed, saving data...');
     
     try {
       // 重新连接以获取最新数据
@@ -390,37 +390,37 @@ async function startManualMode() {
         // 提取更新后的指纹
         const updatedFingerprint = await extractFingerprintFromPage(currentPage, fingerprint);
         await saveFingerprint(updatedFingerprint);
-        console.log('指纹信息已保存到:', FINGERPRINT_FILE);
+        console.log('Fingerprint saved to:', FINGERPRINT_FILE);
       }
     } catch (error) {
-      console.error('保存指纹信息时出错:', error.message);
+      console.error('Error saving fingerprint:', error.message);
       // 即使出错也保存原始指纹
       await saveFingerprint(fingerprint);
     }
     
-    console.log('数据保存完成。');
+    console.log('Data saved successfully.');
     process.exit(0);
   });
   
   // 等待用户关闭浏览器
-  console.log('请手动关闭浏览器以保存数据和指纹信息。');
+  console.log('Please manually close the browser to save data and fingerprint information.');
 }
 
 /**
  * 启动自动模式
  */
 async function startAutoMode() {
-  console.log('启动自动模式...');
+  console.log('Starting auto mode...');
   
   // 加载指纹信息
   const fingerprint = await loadFingerprint();
   
   if (!fingerprint) {
-    console.error('未找到指纹信息，请先运行手动模式创建指纹！');
+    console.error('Fingerprint not found, please run manual mode first to create fingerprint!');
     process.exit(1);
   }
   
-  console.log('加载指纹信息...');
+  console.log('Loading fingerprint...');
   
   // 启动浏览器
   const browser = await puppeteer.launch({
@@ -445,7 +445,7 @@ async function startAutoMode() {
     });
   });
   
-  console.log('浏览器已启动，执行自动化测试...');
+  console.log('Browser started, executing automation tests...');
   console.log(`User Agent: ${fingerprint.userAgent}`);
   
   // TODO: 在这里添加自动化测试逻辑
@@ -453,22 +453,22 @@ async function startAutoMode() {
   try {
     // 导航到示例网站
     await page.goto('https://example.com');
-    console.log('已导航到 https://example.com');
+    console.log('Navigated to https://example.com');
     
     // 添加更多自动化测试步骤...
     // await page.click('#some-button');
     // await page.type('#input-field', 'test data');
     // const result = await page.evaluate(() => document.title);
-    // console.log('页面标题:', result);
+    // console.log('Page title:', result);
     
-    console.log('自动化测试执行完毕');
+    console.log('Automation tests completed');
   } catch (error) {
-    console.error('自动化测试执行出错:', error.message);
+    console.error('Error executing automation tests:', error.message);
   }
   
   // 关闭浏览器
   await browser.close();
-  console.log('浏览器已关闭');
+  console.log('Browser closed');
 }
 
 /**
@@ -480,7 +480,7 @@ async function main() {
     .option('mode', {
       alias: 'm',
       type: 'string',
-      description: '运行模式: manual 或 auto',
+      description: 'Running mode: manual or auto',
       demandOption: true
     })
     .help()
@@ -494,19 +494,19 @@ async function main() {
   } else if (mode === 'auto') {
     await startAutoMode();
   } else {
-    console.error('无效的模式。请使用 "manual" 或 "auto"');
+    console.error('Invalid mode. Please use "manual" or "auto"');
     process.exit(1);
   }
 }
 
 // 错误处理
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('未处理的 Promise 拒绝:', reason);
+  console.error('Unhandled Promise rejection:', reason);
   process.exit(1);
 });
 
 process.on('uncaughtException', (error) => {
-  console.error('未捕获的异常:', error);
+  console.error('Uncaught exception:', error);
   process.exit(1);
 });
 
