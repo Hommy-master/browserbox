@@ -313,7 +313,9 @@ async function startManualMode() {
     ]
   });
   
-  const page = await browser.newPage();
+  // 获取默认页面或创建新页面
+  const pages = await browser.pages();
+  const page = pages.length > 0 ? pages[0] : await browser.newPage();
   
   // 应用指纹
   await applyFingerprint(page, fingerprint);
