@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 const { USER_DATA_DIR, loadFingerprint, sleep } = require('./utils');
 const { info, error, warn } = require('./log');
+const { loadAutomationConfig, getDefaultConfigPath } = require('./configLoader');
+const { executeAutomation } = require('./automationEngine');
 
 
 
@@ -133,26 +135,20 @@ async function startAutoMode() {
   info('Browser started, executing automation tests...');
   info(`User Agent: ${fingerprint.userAgent}`);
   
-  // TODO: 在这里添加自动化测试逻辑
-  // 示例：
+  // 加载自动化配置并执行
   try {
-    // 导航到示例网站
-    await page.goto('https://baidu.com');
-    info('Navigated to https://baidu.com');
+    const configPath = getDefaultConfigPath();
+    const config = await loadAutomationConfig(configPath);
     
-    // 添加更多自动化测试步骤...
-    // await page.click('#some-button');
-    // await page.type('#input-field', 'test data');
-    // const result = await page.evaluate(() => document.title);
-    // console.log('Page title:', result);
-    
-    info('Automation tests completed');
-  } catch (error) {
-    error('Error executing automation tests:', error.message);
+    if (config) {
+      await executeAutomation(page, config);
+    } else {
+      warn('No automation config found, skipping automation');
+    }
+  } catch (err) {
+    error('Error executing automation:', err.message);
   }
   
-  await sleep(5000);
-
   // 关闭浏览器
   await browser.close();
   info('Browser closed');
