@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
-const path = require('path');
-const { CONFIG_DIR, INPUT_DIR, FINGERPRINT_FILE, USER_DATA_DIR, ensureConfigDir, loadFingerprint, saveFingerprint } = require('./utils');
+const { USER_DATA_DIR, loadFingerprint, sleep } = require('./utils');
 
 
 
@@ -117,7 +116,8 @@ async function startAutoMode() {
     ]
   });
   
-  const page = await browser.newPage();
+  const pages = await browser.pages();
+  const page = pages.length > 0 ? pages[0] : await browser.newPage();
   
   // 应用指纹
   await applyFingerprint(page, fingerprint);
@@ -136,8 +136,8 @@ async function startAutoMode() {
   // 示例：
   try {
     // 导航到示例网站
-    await page.goto('https://example.com');
-    console.log('Navigated to https://example.com');
+    await page.goto('https://baidu.com');
+    console.log('Navigated to https://baidu.com');
     
     // 添加更多自动化测试步骤...
     // await page.click('#some-button');
@@ -150,6 +150,8 @@ async function startAutoMode() {
     console.error('Error executing automation tests:', error.message);
   }
   
+  await sleep(5000);
+
   // 关闭浏览器
   await browser.close();
   console.log('Browser closed');

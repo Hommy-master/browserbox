@@ -47,6 +47,8 @@ async function saveFingerprint(fingerprint) {
   await fs.writeFile(FINGERPRINT_FILE, JSON.stringify(fingerprint, null, 2));
 }
 
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 module.exports = {
   CONFIG_DIR,
   INPUT_DIR,
@@ -54,5 +56,6 @@ module.exports = {
   USER_DATA_DIR,
   ensureConfigDir,
   loadFingerprint,
+  sleep,
   saveFingerprint
 };
