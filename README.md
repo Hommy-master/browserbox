@@ -15,13 +15,10 @@
 2. 克隆或下载此项目
 3. 安装依赖:
 
-### 使用 npm
+### 使用 pnpm
 ```bash
-npm install
-```
-
-### 使用 pnpm (推荐)
-```bash
+pnpm approve-builds puppeteer
+pnpm exec puppeteer browsers install chrome
 pnpm install
 ```
 
@@ -34,13 +31,7 @@ pnpm install
 启动手动模式，使用现有指纹或生成随机指纹打开浏览器，人工操作后保存数据：
 
 ```bash
-npm run manual
-```
-
-或者直接运行：
-
-```bash
-node index.js --mode=manual
+pnpm manual
 ```
 
 ### 自动模式
@@ -48,13 +39,7 @@ node index.js --mode=manual
 加载指纹信息并执行自动化测试：
 
 ```bash
-npm run auto
-```
-
-或者直接运行：
-
-```bash
-node index.js --mode=auto
+pnpm auto
 ```
 
 ## 工作原理
