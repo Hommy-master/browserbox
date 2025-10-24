@@ -2,6 +2,7 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const { startManualMode } = require('./manual');
 const { startAutoMode } = require('./auto');
+const { info, error } = require('./log');
 
 /**
  * 主函数
@@ -26,19 +27,19 @@ async function main() {
   } else if (mode === 'auto') {
     await startAutoMode();
   } else {
-    console.error('Invalid mode. Please use "manual" or "auto"');
+    error('Invalid mode. Please use "manual" or "auto"');
     process.exit(1);
   }
 }
 
 // 错误处理
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Promise rejection:', reason);
+  error('Unhandled Promise rejection:', reason);
   process.exit(1);
 });
 
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught exception:', error);
+  error('Uncaught exception:', error);
   process.exit(1);
 });
 

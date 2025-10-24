@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
 const { CONFIG_DIR, INPUT_DIR, FINGERPRINT_FILE, USER_DATA_DIR, ensureConfigDir, loadFingerprint, saveFingerprint } = require('./utils');
+const { info, error, warn } = require('./log');
 
 /**
  * 生成随机指纹信息
@@ -219,7 +220,7 @@ async function applyFingerprint(page, fingerprint) {
       try {
         await page.setCookie(cookie);
       } catch (error) {
-        console.warn('Failed to set cookie:', error.message);
+        warn('Failed to set cookie:', error.message);
       }
     }
   }
@@ -285,7 +286,7 @@ async function extractFingerprintFromPage(page, baseFingerprint) {
  * 启动手动模式
  */
 async function startManualMode() {
-  console.log('Starting manual mode...');
+  info('Starting manual mode...');
   
   // 确保配置目录存在
   await ensureConfigDir();
@@ -295,11 +296,11 @@ async function startManualMode() {
   
   // 如果没有指纹信息，则生成随机指纹
   if (!fingerprint) {
-    console.log('No existing fingerprint found, generating random fingerprint...');
+    info('No existing fingerprint found, generating random fingerprint...');
     fingerprint = generateRandomFingerprint();
     await saveFingerprint(fingerprint);
   } else {
-    console.log('Using existing fingerprint...');
+    info('Using existing fingerprint...');
   }
   
   // 启动浏览器
@@ -327,16 +328,16 @@ async function startManualMode() {
     });
   });
   
-  console.log('Browser started, please begin operation...');
-  console.log(`User Agent: ${fingerprint.userAgent}`);
-  console.log(`Viewport: ${fingerprint.viewport.width}x${fingerprint.viewport.height}`);
+  info('Browser started, please begin operation...');
+  info(`User Agent: ${fingerprint.userAgent}`);
+  info(`Viewport: ${fingerprint.viewport.width}x${fingerprint.viewport.height}`);
   
   // 导航到空白页
   await page.goto('about:blank');
   
   // 监听浏览器关闭事件
   browser.on('disconnected', async () => {
-    console.log('Browser closed, saving data...');
+    info('Browser closed, saving data...');
     
     try {
       // 重新连接以获取最新数据
@@ -346,20 +347,20 @@ async function startManualMode() {
         // 提取更新后的指纹
         const updatedFingerprint = await extractFingerprintFromPage(currentPage, fingerprint);
         await saveFingerprint(updatedFingerprint);
-        console.log('Fingerprint saved to:', FINGERPRINT_FILE);
+        info('Fingerprint saved to:', FINGERPRINT_FILE);
       }
     } catch (error) {
-      console.error('Error saving fingerprint:', error.message);
+      error('Error saving fingerprint:', error.message);
       // 即使出错也保存原始指纹
       await saveFingerprint(fingerprint);
     }
     
-    console.log('Data saved successfully.');
+    info('Data saved successfully.');
     process.exit(0);
   });
   
   // 等待用户关闭浏览器
-  console.log('Please manually close the browser to save data and fingerprint information.');
+  info('Please manually close the browser to save data and fingerprint information.');
 }
 
 module.exports = { startManualMode };

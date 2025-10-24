@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const { USER_DATA_DIR, loadFingerprint, sleep } = require('./utils');
+const { info, error, warn } = require('./log');
 
 
 
@@ -65,7 +66,7 @@ async function applyFingerprint(page, fingerprint) {
       try {
         await page.setCookie(cookie);
       } catch (error) {
-        console.warn('Failed to set cookie:', error.message);
+        warn('Failed to set cookie:', error.message);
       }
     }
   }
@@ -93,17 +94,17 @@ async function applyFingerprint(page, fingerprint) {
  * 启动自动模式
  */
 async function startAutoMode() {
-  console.log('Starting auto mode...');
+  info('Starting auto mode...');
   
   // 加载指纹信息
   const fingerprint = await loadFingerprint();
   
   if (!fingerprint) {
-    console.error('Fingerprint not found, please run manual mode first to create fingerprint!');
+    error('Fingerprint not found, please run manual mode first to create fingerprint!');
     process.exit(1);
   }
   
-  console.log('Loading fingerprint...');
+  info('Loading fingerprint...');
   
   // 启动浏览器
   const browser = await puppeteer.launch({
@@ -129,15 +130,15 @@ async function startAutoMode() {
     });
   });
   
-  console.log('Browser started, executing automation tests...');
-  console.log(`User Agent: ${fingerprint.userAgent}`);
+  info('Browser started, executing automation tests...');
+  info(`User Agent: ${fingerprint.userAgent}`);
   
   // TODO: 在这里添加自动化测试逻辑
   // 示例：
   try {
     // 导航到示例网站
     await page.goto('https://baidu.com');
-    console.log('Navigated to https://baidu.com');
+    info('Navigated to https://baidu.com');
     
     // 添加更多自动化测试步骤...
     // await page.click('#some-button');
@@ -145,16 +146,16 @@ async function startAutoMode() {
     // const result = await page.evaluate(() => document.title);
     // console.log('Page title:', result);
     
-    console.log('Automation tests completed');
+    info('Automation tests completed');
   } catch (error) {
-    console.error('Error executing automation tests:', error.message);
+    error('Error executing automation tests:', error.message);
   }
   
   await sleep(5000);
 
   // 关闭浏览器
   await browser.close();
-  console.log('Browser closed');
+  info('Browser closed');
 }
 
 module.exports = { startAutoMode };
