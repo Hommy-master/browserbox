@@ -1,0 +1,24 @@
+{
+  "name": "fingerprint-browser",
+  "version": "1.0.0",
+  "description": "A fingerprint browser tool with manual and automatic modes using Puppeteer",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "manual": "node index.js --mode=manual",
+    "auto": "node index.js --mode=auto",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "puppeteer",
+    "browser",
+    "fingerprint",
+    "automation"
+  ],
+  "author": "Developer",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^21.0.0",
+    "yargs": "^17.0.0"
+  }
+}
