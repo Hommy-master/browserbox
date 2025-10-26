@@ -29,7 +29,7 @@ async function loadAutomationConfig(configPath) {
  * @returns {string} 默认配置文件路径
  */
 function getDefaultConfigPath() {
-  return path.join(process.cwd(), 'config', 'automation.json');
+  return path.join(process.cwd(), 'config', 'input', 'automation.json');
 }
 
 module.exports = {

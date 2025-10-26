@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const { info, error, warn } = require('./log');
+const { sleep } = require('./utils');
 
 /**
  * 自动化执行引擎模块
@@ -46,7 +47,24 @@ async function executeStep(page, step) {
         break;
         
       case 'click':
-        await page.click(step.parameters.selector);
+        // 等待元素可点击
+        await page.waitForSelector(step.parameters.selector, {
+          visible: true,
+          timeout: step.parameters.timeout || 10000
+        });
+        // 尝试多种点击方式
+        try {
+          await page.click(step.parameters.selector);
+        } catch (clickError) {
+          // 如果直接点击失败，尝试使用evaluate点击
+          info(`Direct click failed, trying evaluate click for: ${step.parameters.selector}`);
+          const element = await page.$(step.parameters.selector);
+          if (element) {
+            await page.evaluate(el => el.click(), element);
+          } else {
+            throw new Error(`Element not found: ${step.parameters.selector}`);
+          }
+        }
         break;
         
       case 'waitForNavigation':
@@ -61,6 +79,10 @@ async function executeStep(page, step) {
         await ensureDirectoryExists(step.parameters.path);
         await page.screenshot({ path: step.parameters.path });
         info(`Screenshot saved to: ${step.parameters.path}`);
+        break;
+        
+      case 'wait':
+        await sleep(step.parameters.duration);
         break;
         
       default:
