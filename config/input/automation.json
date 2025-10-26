@@ -1,0 +1,60 @@
+{
+  "name": "Baidu Search Automation",
+  "description": "Automated search on Baidu for '简创AIGC'",
+  "steps": [
+    {
+      "stepId": "step1",
+      "description": "Navigate to Baidu homepage",
+      "action": "goto",
+      "parameters": {
+        "url": "https://www.baidu.com"
+      },
+      "waitFor": {
+        "selector": "#chat-textarea",
+        "timeout": 10000
+      }
+    },
+    {
+      "stepId": "step2",
+      "description": "Type search keyword",
+      "action": "type",
+      "parameters": {
+        "selector": "#chat-textarea",
+        "text": "简创AIGC"
+      }
+    },
+    {
+      "stepId": "step3",
+      "description": "Click search button",
+      "action": "click",
+      "parameters": {
+        "selector": "#chat-submit-button"
+      },
+      "waitFor": {
+        "type": "networkidle2",
+        "timeout": 15000
+      }
+    },
+    {
+      "stepId": "step4",
+      "description": "Take screenshot of search results",
+      "action": "screenshot",
+      "parameters": {
+        "path": "config/output/search_results.png"
+      }
+    },
+    {
+      "stepId": "step5",
+      "description": "Wait for 10 seconds",
+      "action": "wait",
+      "parameters": {
+        "duration": 10000
+      }
+    }
+  ],
+  "errorHandling": {
+    "continueOnError": false,
+    "screenshotOnError": true,
+    "screenshotPath": "config/output/error_screenshot.png"
+  }
+}
